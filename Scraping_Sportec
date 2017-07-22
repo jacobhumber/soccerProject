@@ -1,0 +1,46 @@
+import requests
+from bs4 import BeautifulSoup
+
+#Get Request to obtain HTML file for 2017 year
+html17 = requests.get('http://www.spotrac.com/epl/rankings/base/')
+#Check to see if it worked
+html17.text
+html17.status_code #200?
+html17.headers
+
+soup17 = BeautifulSoup(html17.content)
+print(soup17.prettify())
+
+#Names
+def Get_Name(soupObj):
+    '''
+    This function will return a list of player names and takes a soup object.
+    '''
+    nameList = []
+    for name in soup17.find_all('a'):
+        if name.get('class') == ['team-name']:
+            nameList.append(name.get_text())
+    return nameList   
+    
+
+#Salaries
+def Get_Sal(soupObj):
+	'''
+	This function will scrap the salaries.  It will not obtain position, however, it can be 
+	expanded to do so.  The fun takes a soup object and returns a list of ints.
+	'''
+	salList = []
+	for sal in soupObj.find_all('span'):
+		salTxt = sal.get_text()
+		if len(salTxt) > 2:
+		    if salTxt[1].isdigit():
+			    salList.append(int(salTxt[1:].replace(',', '')))
+	return salList
+
+
+Get_Name(soup17)
+
+
+
+
+
